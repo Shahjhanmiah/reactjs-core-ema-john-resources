@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { addToDb } from '../../utilities/fakedb';
+import { addToDb, getStoredCard } from '../../utilities/fakedb';
 import Cart from '../Cart/Cart';
 import Product from '../product/Product';
 import'./Shop.css';
@@ -9,21 +9,50 @@ const Shop = () => {
     const [cart,setCart] = useState([])
 
     useEffect( ()=>{
+        console.log('Local Storage first line',products);
         fetch('products.json')
         .then(res=>res.json())
-        .then(data=>setProducts(data))
-    },[])
-    const handleClick = (product) =>{
-        console.log(product);
-        // cart.push(product)
-        const newCart = [...cart,product];
-        setCart(newCart);
-        addToDb(product.id);
-        
-        
-
+        .then(data=>{
+            setProducts(data)
+            console.log('product load')
+        })
+           
          
+    },[])
+    useEffect(()=>{
+        const storedCart = getStoredCard();
+        const savedCart =[];
+        for(const id in storedCart){
+            const addedProduct = products.find(product=>product.id===id)
+            if(addedProduct){
+                const qunatity = storedCart[id];
+                addedProduct.qunatity = qunatity
+             savedCart.push(addedProduct);
+            }
+        }
+        setCart(savedCart);
+        
+    },[products])
+    const handleClick = (selectedproduct) =>{
+        console.log(selectedproduct);
+      let newCart = [];
+        const exists   = cart.find(product=>product.id===selectedproduct.id)
+        if(!exists){
+            selectedproduct.qunatity = 1; 
+             newCart = [...cart,selectedproduct]
 
+        }
+        else{
+            const rest = cart .filter(product => product.id!== selectedproduct.id);
+            exists.qunatity= exists.qunatity+1;
+            newCart = [...rest,exists];
+        }
+        // cart.push(product)
+        // const newCart = [...cart,selectedproduct];
+        setCart(newCart);
+        addToDb(selectedproduct.id);
+        
+        
 
     }
     return (
