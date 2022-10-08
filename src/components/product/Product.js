@@ -5,7 +5,7 @@ import './Product..css';
 const Product = (props) => {
     // console.log(props);
     const  {handleClick,product} = props;  
-    const {name,img, seller,price,rating} = props.product
+    const {name,img, seller,price,rating} = product
     
     return (
         <div className='product'>
@@ -16,7 +16,7 @@ const Product = (props) => {
             <p> Seller:{seller}</p>
             <p>Rating:{rating} start</p>
             </div>
-            <button onClick= {()=>props.handleClick(props.product)}className='btn-card'>
+            <button onClick= {()=>handleClick(product)}className='btn-card'>
                 <p className='btn-text'>Add to cart </p>
                 <FontAwesomeIcon icon={ faShoppingCart}></FontAwesomeIcon>
 

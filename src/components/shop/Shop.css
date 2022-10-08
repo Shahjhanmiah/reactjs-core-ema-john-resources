@@ -19,3 +19,12 @@
     }
     
 }
+@media screen and (max-width:900px) {
+    .products-container{
+        grid-template-columns: repeat(1,1fr);
+    }
+    
+}
+
+
+

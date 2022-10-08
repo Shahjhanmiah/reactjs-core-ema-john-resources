@@ -1,26 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { addToDb, getStoredCard } from '../../utilities/fakedb';
+import { useLoaderData } from 'react-router-dom';
+import { addToDb, deleteShoppingCart, getStoredCard } from '../../utilities/fakedb';
 import Cart from '../Cart/Cart';
 import Product from '../product/Product';
 import'./Shop.css';
 
 const Shop = () => {
-    const [products,setProducts] = useState([]);
-    const [cart,setCart] = useState([])
-
-    useEffect( ()=>{
-        console.log('Local Storage first line',products);
-        fetch('products.json')
-        .then(res=>res.json())
-        .then(data=>{
-            setProducts(data)
-            console.log('product load')
-        })
-           
-         
-    },[])
+    const products = useLoaderData()
+    const [cart,setCart] = useState([]);
+    const clearCart = () =>{
+        setCart([]);
+        deleteShoppingCart();
+    }
     useEffect(()=>{
         const storedCart = getStoredCard();
+        // console.log(storedCart);
         const savedCart =[];
         for(const id in storedCart){
             const addedProduct = products.find(product=>product.id===id)
@@ -43,7 +37,7 @@ const Shop = () => {
 
         }
         else{
-            const rest = cart .filter(product => product.id!== selectedproduct.id);
+            const rest = cart.filter(product => product.id!== selectedproduct.id);
             exists.qunatity= exists.qunatity+1;
             newCart = [...rest,exists];
         }
@@ -51,9 +45,6 @@ const Shop = () => {
         // const newCart = [...cart,selectedproduct];
         setCart(newCart);
         addToDb(selectedproduct.id);
-        
-        
-
     }
     return (
         <div className='shop-container'>
@@ -68,7 +59,7 @@ const Shop = () => {
             }
            </div>
            <div className='cart-container'>
-            <Cart cart={cart}></Cart>
+            <Cart clearCart={clearCart}  cart={cart}></Cart>
             {/* <h4>Order Summary</h4>
             <p>Selected Item:{cart.length}</p> */}
            </div>
